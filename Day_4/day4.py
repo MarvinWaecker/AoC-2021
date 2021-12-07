@@ -17,13 +17,6 @@ with open(filename, 'r') as file:
                 boards = line.split()
 
 
-
-
-
-
-
-from itertools import chain
-
 # load data
 with open(filename, 'r') as file:
     numbers, *data = file.read().strip().split("\n\n")
@@ -44,68 +37,31 @@ for board in data:
         rows_new.append(row)
     boards.append(rows_new)
 
+
+boards_num = len(boards)
+row_num = len(boards[0])
+col_num = len(boards[0][0])
+
+
 lines = []
-for i in range(len(boards)):
-    for j in range(len(boards[i][0])): 
+boards_new = boards
+for i in range(boards_num):
+    for j in range(col_num): 
         line = []
-        for k in range(len(boards[i])): 
-            line.append(boards[i][j][k])
+        for k in range(row_num): 
+            line.append(boards[i][k][j])
         # boards[i].append(line)
-        lines.append(line)
-
-for board in boards:
-    for i in range(len(board)):
-        board.append(lines[i])
-
-print(len(boards))
-print(boards[2])
-for b in boards:
-    print(b)
+        boards_new[i].append(line)
 
 
-# drawn, remain = set(), set(range(len(boards)))
+drawn, remain = set(), set(range(len(boards)))
 
-# for num in nums:
-#     drawn.add(num)
-#     for i in set(remain):
-#         print(drawn)
-#         if any(set(line) <= drawn for line in boards[i]):
-#             print('test1')
-#             remain.remove(i)
-#             if len(remain) == len(boards)-1 or not remain:
-#                 print('test')
-#                 print(num * sum(set.union(set(*boards[i])) - drawn))
-
-
-
-
-# boards = []
-# for board in data:
-#     rows = [
-#         [int(x) for x in row.split()]
-#         for row in board.split("\n")
-#     ]
-#     # fmt:on
-#     boards.append([set(line) for line in chain(rows, zip(*rows))])
-
-
-
-
-# drawn, remaining = set(), set(range(len(boards)))
-# print(remaining)
-# for number in map(int, numbers.split(",")):
-#     drawn.add(number)
-
-#     for i in set(remaining):
-#         if any(set(line) <= drawn for line in boards[i]):
-#             remaining.remove(i)
-
-#             if len(remaining) == len(boards) - 1 or not remaining:
-#                 print(number * sum(set.union(*boards[i]) - drawn))
-
-
-
-
-
+for num in nums:
+    drawn.add(num)
+    for i in set(remain):
+        if any(set(line) <= drawn for line in boards[i]):
+            remain.remove(i)
+            if len(remain) == len(boards)-1 or not remain:
+                print(num * sum(set.union(*[set(row) for row in boards[i]]) - drawn))
 
 
