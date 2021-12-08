@@ -3,69 +3,65 @@ import os
 
 # paths
 here = os.path.dirname(os.path.abspath(__file__))
-filename = os.path.join(here, 'data.txt')
+filename = os.path.join(here, 'test_data.txt')
 
-from functools import reduce
-from more_itertools import split_at
-from collections import defaultdict
-from itertools import chain, dropwhile
 
-def parse_bingo_line(line, row):
-    return {
-        val : (row, idx) for idx, val in enumerate(map(int, line.split()))
-    }
+# load data
+numbers = []
+with open(filename, 'r') as file:
+    for k, line in enumerate(file.read().splitlines()):
+        if not line.isspace():
+            if k == 0:
+                numbers = line.strip().split(',')
+            else:
+                boards = line.split()
 
-def parse_bingo(lines):
-    return reduce(
-        dict.__or__, 
-        (parse_bingo_line(line, row) for row, line in enumerate(lines)),
-        {})
 
-def comp(pred):
-    return lambda x: not pred(x)
+# load data
+with open(filename, 'r') as file:
+    numbers, *data = file.read().strip().split("\n\n")
 
-def parse_multiple_bingos(lines):
-    return [parse_bingo(block) for block in split_at(lines, comp(bool))]
-    
-def parse_input(filename):
-    with open(filename) as f:
-        nums = list(map(int, next(f).strip().split(",")))
-        return nums, parse_multiple_bingos(dropwhile(comp(bool), map(str.strip, f)))
+nums = numbers.split(',')
+nums = [int(n) for n in nums]
 
-def is_bingo(nums, board):
-    indices = list(filter(lambda x: x is not None,
-        (board.get(num, None) for num in nums)))
-        
-    row_dict = defaultdict(set)
-    col_dict = defaultdict(set)
+boards = []
+for board in data:
+    rows = board.split("\n")
+    rows_new = []
+    cols = []
+    for row in rows:
+        # print(row)
+        row = [int(x) for x in row.split()]
 
-    for x, y in indices:
-        row_dict[x].add(y)
-        col_dict[y].add(x)
+        # print(set(row))
+        rows_new.append(row)
+    boards.append(rows_new)
 
-    return any(len(s) == 5 for s in chain(row_dict.values(), col_dict.values()))
 
-def find_first_bingo(nums, boards):
-    for idx in range(len(nums)):
-        curr = nums[:idx]
-        try:
-            return curr, next(board for board in boards if is_bingo(curr, board))
-        except:
-            pass
-    
-def calculate_final_score(nums, board):
-    return sum(set(board) - set(nums)) * nums[-1]
+boards_num = len(boards)
+row_num = len(boards[0])
+col_num = len(boards[0][0])
 
-def part_1(filename):
-    called_nums, winning_board = find_first_bingo(*parse_input(filename))
-    return calculate_final_score(called_nums, winning_board)
 
-def find_last_bingo(nums, boards):
-    for idx in range(len(nums)):
-        boards = [board for board in boards if not is_bingo(nums[:idx], board)]
-        if len(boards) == 1:
-            return find_first_bingo(nums, boards)
+lines = []
+boards_new = boards
+for i in range(boards_num):
+    for j in range(col_num): 
+        line = []
+        for k in range(row_num): 
+            line.append(boards[i][k][j])
+        # boards[i].append(line)
+        boards_new[i].append(line)
 
-def part_2(filename):
-    called_nums, losing_board = find_last_bingo(*parse_input(filename))
-    return calculate_final_score(called_nums, losing_board)
+
+drawn, remain = set(), set(range(len(boards)))
+
+for num in nums:
+    drawn.add(num)
+    for i in set(remain):
+        if any(set(line) <= drawn for line in boards[i]):
+            remain.remove(i)
+            if len(remain) == len(boards)-1 or not remain:
+                print(num * sum(set.union(*[set(row) for row in boards[i]]) - drawn))
+
+
