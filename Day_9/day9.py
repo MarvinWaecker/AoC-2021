@@ -41,12 +41,12 @@ def get_basin(pos):
     return basin
 
 def follow_path(pos, basin):
-    p1 = map[pos]
-    for neighbour in get_neighbours(*pos):
-        p2 = map.get(neighbour, 0)          # return 0 if there's no neighbor
-        if p2 > p1 and p2 != 9:
-            basin.add(neighbour)
-            follow_path(neighbour, basin)
+    p1 = map[pos]    # current position value
+    for neighbour in get_neighbours(*pos):  # loop through neighbours of current position 
+        p2 = map.get(neighbour, 0)          # get neighbour value (return 0 if there's no neighbour so it's a water point)
+        if p2 > p1 and p2 != 9:             # if neighbour value is higher than current position value and neighbour value is not 9 (doesn't count)
+            basin.add(neighbour)            # add neighbour to basin
+            follow_path(neighbour, basin)   # run again with neighbour as current position
 
 
 p = 1
