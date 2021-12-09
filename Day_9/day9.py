@@ -6,7 +6,7 @@ here = os.path.dirname(os.path.abspath(__file__))
 filename = os.path.join(here, 'data.txt')
 
 map = {}
-with open(filename) as file:
+with open(filename, 'r') as file:
     for y, line in enumerate(file):
         for x, char in enumerate(line.strip()):
             map[(x, y)] = int(char)

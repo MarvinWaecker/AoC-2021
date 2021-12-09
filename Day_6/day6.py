@@ -8,7 +8,7 @@ filename = os.path.join(here, 'data.txt')
 
 # part 1 
 def part1(days):
-    with open(filename) as file:
+    with open(filename, 'r') as file:
         fishes = [int(i) for i in file.read().split(',')]
     days = range(days)
 
