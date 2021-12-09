@@ -10,6 +10,7 @@ with open(filename, 'r') as file:
     for x, pos in enumerate(file.read().split(',')):
         data[x] = int(pos) 
 
+# part1
 def get_cheapest(data):
     minimum = min(data.values())
     maximum = max(data.values())
@@ -25,3 +26,7 @@ def get_cheapest(data):
     return fuel_list
 
 print(min(get_cheapest(data)))
+
+
+
+# part2
